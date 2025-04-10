@@ -6,50 +6,58 @@ export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const cameraAnimation = useAnimation();
 
-  // Effect for extremely slow parallax camera movement following mouse (with throttling)
+  // Effect for ultra-smooth, very slow parallax camera and particle movement
   useEffect(() => {
-    let isThrottled = false;
-    let lastPosition = { x: 0.5, y: 0.5 }; // Default center position
+    // Target position - will be updated immediately on mouse move
+    let targetPosition = { x: 0.5, y: 0.5 };
     
+    // Handle mouse movement - just update the target immediately
     const handleMouseMove = (e: MouseEvent) => {
-      if (isThrottled) return;
-      
-      // Throttle - only process mouse events every 1000ms (1 second)
-      isThrottled = true;
-      setTimeout(() => { isThrottled = false; }, 1000);
-      
       // Get current mouse position
-      const currentX = e.clientX / window.innerWidth;
-      const currentY = e.clientY / window.innerHeight;
-      
-      // Apply extreme smoothing - only move 2% toward the new position
-      const smoothedX = lastPosition.x + (currentX - lastPosition.x) * 0.02;
-      const smoothedY = lastPosition.y + (currentY - lastPosition.y) * 0.02;
-      
-      // Update last position
-      lastPosition = { x: smoothedX, y: smoothedY };
-      
-      // Update state with greatly smoothed position
-      setMousePosition({
-        x: smoothedX,
-        y: smoothedY,
-      });
+      targetPosition = {
+        x: e.clientX / window.innerWidth,
+        y: e.clientY / window.innerHeight
+      };
     };
-
+    
+    // Animation frame based smooth movement
+    const smoothAnimationFrame = () => {
+      // Calculate the new position with extremely subtle easing (only move 0.2% of the way each frame)
+      const easeAmount = 0.002; // Super slow movement - only 0.2% per frame
+      
+      setMousePosition(prev => ({
+        x: prev.x + (targetPosition.x - prev.x) * easeAmount,
+        y: prev.y + (targetPosition.y - prev.y) * easeAmount
+      }));
+      
+      // Continue the animation
+      requestAnimationFrame(smoothAnimationFrame);
+    };
+    
+    // Start the smooth animation
+    const animationId = requestAnimationFrame(smoothAnimationFrame);
+    
+    // Add mouse event listener
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationId);
+    };
   }, []);
 
-  // Extremely subtle camera movement based on mouse position (barely perceptible)
+  // Extremely smooth and subtle camera movement based on mouse position
   useEffect(() => {
     cameraAnimation.start({
-      x: (mousePosition.x - 0.5) * 0.2, // Dramatically reduced movement range (50x slower)
-      y: (mousePosition.y - 0.5) * 0.1, // Dramatically reduced movement range (50x slower)
+      x: (mousePosition.x - 0.5) * 4,  // Very gentle movement range
+      y: (mousePosition.y - 0.5) * 2,  // Very gentle movement range
       transition: { 
         type: "spring", 
-        stiffness: 5,   // Extremely low stiffness for very slow response
-        damping: 100,   // Very high damping to prevent any oscillation
-        mass: 10        // High mass for extremely slow movement
+        stiffness: 3,    // Extremely low stiffness for very slow response
+        damping: 90,     // Very high damping for super smooth, non-oscillating movement
+        mass: 12,        // Very high mass for extremely slow movement
+        duration: 3      // Long duration ensures smooth transition
       }
     });
   }, [mousePosition, cameraAnimation]);
