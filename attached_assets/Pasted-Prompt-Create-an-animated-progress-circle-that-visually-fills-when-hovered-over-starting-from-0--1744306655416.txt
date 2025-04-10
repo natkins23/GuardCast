@@ -1,0 +1,62 @@
+Prompt:
+"Create an animated progress circle that visually fills when hovered over, starting from 0% and gradually progressing to the target percentage (e.g., 85%) in 1 second. The key focus should be on a smooth, dynamic animation where the circle gradually fills, simulating a progress bar animation, and not showing the final percentage immediately.
+
+Instructions:
+Circle Setup (SVG or Canvas):
+
+Use SVG to create a circle representing the progress indicator.
+
+Separate the circle into two parts: one for the background (static) and one for the foreground (animated). The animated part will represent the progress fill.
+
+Styling:
+
+The background of the circle should be dark (e.g., black or dark gray), while the progress part should be filled with an electric green stroke.
+
+Ensure that the progress animation (the green part) gradually fills the circle as the user hovers over the section. It should take 1 second to go from 0% to the target percentage (e.g., 85%).
+
+The circle stroke should have a stroke-dasharray to represent the total circumference and a stroke-dashoffset for the actual fill (progress) to animate.
+
+Animation Mechanics:
+
+Target value: On hover, the circle should animate from 0% to the target value (e.g., 85%) in 1 second. This will happen by manipulating the stroke-dashoffset property.
+
+Smooth Transition: The fill should be a smooth, gradual animation, not an instant fill. Use CSS transitions (or JavaScript) to animate the stroke from 0% to the desired target over the course of 1 second.
+
+Reset on Mouse Leave: When the user stops hovering, the circle should either remain at the target percentage or reset back to 0%. This behavior can be configured using event listeners.
+
+Event Handling:
+
+Use JavaScript to trigger the animation when the user hovers over the circle.
+
+Upon hover, the progress circle should smoothly animate the stroke from 0% to the target percentage (e.g., 85%). The progress should be dynamic, with the percentage being determined by the section (e.g., high costs, slow response times).
+
+Optionally, use mouseleave events to either reset the animation to 0% or keep it at the target percentage.
+
+Customization:
+
+The target percentage should be dynamically adjustable. For example, the percentage value could be 85% for 'High Costs', 40% for 'Slow Response Times', etc.
+
+The progress circle should reflect different values for each section and smoothly animate based on the corresponding target percentage.
+
+Objective:
+The goal is to create a dynamic and visually engaging progress animation that gradually fills a circular path, providing an interactive hover experience. The animation should start from 0% and reach the target value, making the interaction feel natural and fluid."
+
+Key Concepts:
+SVG Circle: Use this for drawing the progress path.
+
+Stroke Properties: Adjust stroke-dasharray and stroke-dashoffset to control the fill and animation.
+
+JavaScript Event Handling: Use mouseenter and mouseleave events to trigger the animation and control the animation state.
+
+CSS Transitions: Apply smooth transitions to the stroke-dashoffset for a fluid animation.
+
+Dynamic Values: Ensure the target percentage is dynamically adjustable for different sections.
+
+Next Steps:
+Start with SVG for the circle structure and implement the dynamic percentage.
+
+Apply stroke-dasharray to create the circumference of the circle.
+
+Use stroke-dashoffset for the progress animation, and apply CSS transitions to animate the fill.
+
+Set up event listeners to trigger the animation on hover and decide whether to reset the circle on mouse leave.

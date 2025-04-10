@@ -77,7 +77,7 @@ const icons = {
   )
 };
 
-// Progress Circle component using D3
+// SVG Progress Circle component
 interface ProgressCircleProps {
   percentage: number;
   color?: string;
@@ -85,143 +85,107 @@ interface ProgressCircleProps {
 }
 
 function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }: ProgressCircleProps) {
-  const svgRef = useRef(null);
   const [currentPercentage, setCurrentPercentage] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   
-  // Animate the percentage from 0 to target when component mounts
-  useEffect(() => {
-    const duration = 1000; // animation duration in ms
-    const steps = 60; // number of steps for smoother animation
-    const stepDuration = duration / steps;
-    const increment = percentage / steps;
-    let currentStep = 0;
-    
-    const timer = setInterval(() => {
-      currentStep++;
-      setCurrentPercentage(Math.min(increment * currentStep, percentage));
-      
-      if (currentStep >= steps) {
-        clearInterval(timer);
-      }
-    }, stepDuration);
-    
-    return () => clearInterval(timer);
-  }, [percentage]);
+  // Calculates the stroke-dashoffset based on the percentage
+  const calculateStrokeDashoffset = (percent: number, circumference: number): number => {
+    return circumference - (percent / 100) * circumference;
+  };
   
+  // When animation is triggered, smoothly transition from 0 to target percentage
   useEffect(() => {
-    if (!svgRef.current) return;
-    
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove(); // Clear SVG
-    
-    const width = size;
-    const height = size;
-    const radius = Math.min(width, height) / 2;
-    const thickness = radius * 0.2;
-    
-    const g = svg
-      .append("g")
-      .attr("transform", `translate(${width / 2}, ${height / 2})`);
-    
-    // Background circle
-    g.append("circle")
-      .attr("r", radius - thickness / 2)
-      .attr("fill", "none")
-      .attr("stroke", "#333")
-      .attr("stroke-width", thickness);
-    
-    // Calculate the circumference of the circle
-    const circumference = 2 * Math.PI * (radius - thickness / 2);
-    
-    // Manually calculate the arc path instead of using d3.arc()
-    const calculateArcPath = () => {
-      const startAngle = 0;
-      const endAngle = 2 * Math.PI * (currentPercentage / 100);
+    if (isAnimating) {
+      setCurrentPercentage(0); // Reset to 0 before animating
       
-      const innerRadius = radius - thickness;
-      const outerRadius = radius;
+      // Use setTimeout to ensure the reset to 0 renders before starting the animation
+      const timer = setTimeout(() => {
+        setCurrentPercentage(percentage);
+      }, 50);
       
-      // Calculate points for outer and inner arc
-      const x1 = Math.cos(startAngle) * outerRadius;
-      const y1 = Math.sin(startAngle) * outerRadius;
-      
-      const x2 = Math.cos(endAngle) * outerRadius;
-      const y2 = Math.sin(endAngle) * outerRadius;
-      
-      const x3 = Math.cos(endAngle) * innerRadius;
-      const y3 = Math.sin(endAngle) * innerRadius;
-      
-      const x4 = Math.cos(startAngle) * innerRadius;
-      const y4 = Math.sin(startAngle) * innerRadius;
-      
-      // Create arc flag (0 for minor arc, 1 for major arc)
-      const arcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
-      
-      // Build the SVG path
-      return `
-        M ${x1} ${y1}
-        A ${outerRadius} ${outerRadius} 0 ${arcFlag} 1 ${x2} ${y2}
-        L ${x3} ${y3}
-        A ${innerRadius} ${innerRadius} 0 ${arcFlag} 0 ${x4} ${y4}
-        Z
-      `;
-    };
-    
-    const arcPath = calculateArcPath();
-    
-    // Add glow effect filter
-    const defs = svg.append("defs");
-    const filter = defs.append("filter")
-      .attr("id", `glow-${percentage}`)
-      .attr("x", "-50%")
-      .attr("y", "-50%")
-      .attr("width", "200%")
-      .attr("height", "200%");
-      
-    filter.append("feGaussianBlur")
-      .attr("stdDeviation", "3")
-      .attr("result", "coloredBlur");
-      
-    const feMerge = filter.append("feMerge");
-    feMerge.append("feMergeNode")
-      .attr("in", "coloredBlur");
-    feMerge.append("feMergeNode")
-      .attr("in", "SourceGraphic");
-    
-    // Progress arc with animation
-    g.append("path")
-      .attr("d", arcPath)
-      .attr("fill", color)
-      .attr("opacity", 0.8)
-      .attr("filter", `url(#glow-${percentage})`);
-    
-    // Add a slight pulse animation to the arc
-    g.append("path")
-      .attr("d", arcPath)
-      .attr("fill", "none")
-      .attr("stroke", color)
-      .attr("stroke-width", 1)
-      .attr("opacity", 0.5)
-      .attr("class", "pulse-path");
-    
-    // Percentage text with counter animation
-    g.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", ".35em")
-      .attr("fill", "#fff")
-      .attr("font-size", radius * 0.45)
-      .attr("font-weight", "bold")
-      .text(`${Math.round(currentPercentage)}${percentage === 40 ? '' : '%'}`);
-      
-  }, [currentPercentage, color, size, percentage]);
+      return () => clearTimeout(timer);
+    } else {
+      setCurrentPercentage(0);
+    }
+  }, [isAnimating, percentage]);
+  
+  // Calculate dimensions
+  const radius = size / 2;
+  const strokeWidth = radius * 0.2;
+  const innerRadius = radius - strokeWidth / 2;
+  const circumference = 2 * Math.PI * innerRadius;
+  
+  // Calculate stroke-dashoffset for the progress arc
+  const strokeDashoffset = calculateStrokeDashoffset(currentPercentage, circumference);
   
   return (
-    <svg 
-      ref={svgRef} 
-      width={size} 
-      height={size} 
-      className="progress-circle"
-    ></svg>
+    <div 
+      className="relative"
+      onMouseEnter={() => setIsAnimating(true)}
+      onMouseLeave={() => setIsAnimating(false)}
+    >
+      <svg 
+        width={size} 
+        height={size} 
+        className="progress-circle"
+        viewBox={`0 0 ${size} ${size}`}
+      >
+        {/* Create a filter for the glow effect */}
+        <defs>
+          <filter id={`glow-${percentage}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feFlood floodColor={color} floodOpacity="0.3" result="color" />
+            <feComposite in="color" in2="blur" operator="in" result="glow" />
+            <feMerge>
+              <feMergeNode in="glow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        
+        {/* Background circle */}
+        <circle 
+          cx={radius} 
+          cy={radius} 
+          r={innerRadius} 
+          fill="none" 
+          stroke="#333"
+          strokeWidth={strokeWidth} 
+        />
+        
+        {/* Progress circle */}
+        <circle 
+          cx={radius} 
+          cy={radius} 
+          r={innerRadius}
+          fill="none" 
+          stroke={color} 
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference} 
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${radius} ${radius})`}
+          filter={`url(#glow-${percentage})`}
+          style={{
+            transition: 'stroke-dashoffset 1s ease-in-out',
+          }}
+          className={isAnimating ? "pulse-path" : ""}
+        />
+        
+        {/* Percentage text */}
+        <text 
+          x={radius} 
+          y={radius} 
+          textAnchor="middle" 
+          dominantBaseline="middle"
+          fill="#fff" 
+          fontSize={radius * 0.45}
+          fontWeight="bold"
+        >
+          {Math.round(currentPercentage)}{percentage === 40 ? '' : '%'}
+        </text>
+      </svg>
+    </div>
   );
 }
 
