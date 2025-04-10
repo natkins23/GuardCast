@@ -4,12 +4,37 @@ export default function Hero() {
   return (
     <section className="relative flex items-center min-h-screen pt-16 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#121212]/90 to-[#121212]/70 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121212]/80 to-[#121212]/60 z-10"></div>
         <img 
-          src="https://images.unsplash.com/photo-1621401687419-d9d4638ca796?q=80&w=1920&auto=format&fit=crop" 
-          alt="Security monitoring room with screens" 
+          src="/images/guardcastHero.png" 
+          alt="AI Security Monitoring System with suspicious activity detection" 
           className="object-cover w-full h-full" 
         />
+      </div>
+      
+      {/* Animated Overlay Effect */}
+      <div className="absolute inset-0 z-5 pointer-events-none">
+        <div className="absolute inset-0 bg-[#22c55e]/5"></div>
+        <div className="h-full w-full flex items-center justify-center">
+          <div className="w-full h-full opacity-20 overflow-hidden">
+            {[...Array(30)].map((_, i) => (
+              <div 
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  width: Math.random() * 4 + 2 + 'px',
+                  height: Math.random() * 4 + 2 + 'px',
+                  background: '#22c55e',
+                  left: Math.random() * 100 + '%',
+                  top: Math.random() * 100 + '%',
+                  opacity: Math.random() * 0.5 + 0.1,
+                  animation: `float ${Math.random() * 10 + 10}s linear infinite`,
+                  animationDelay: `${Math.random() * 5}s`
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
       
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 z-20 pt-20 pb-24">
