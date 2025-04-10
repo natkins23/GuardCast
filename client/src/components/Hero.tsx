@@ -6,12 +6,33 @@ export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const cameraAnimation = useAnimation();
 
-  // Effect for parallax camera movement following mouse
+  // Effect for extremely slow parallax camera movement following mouse (with throttling)
   useEffect(() => {
+    let isThrottled = false;
+    let lastPosition = { x: 0.5, y: 0.5 }; // Default center position
+    
     const handleMouseMove = (e: MouseEvent) => {
+      if (isThrottled) return;
+      
+      // Throttle - only process mouse events every 1000ms (1 second)
+      isThrottled = true;
+      setTimeout(() => { isThrottled = false; }, 1000);
+      
+      // Get current mouse position
+      const currentX = e.clientX / window.innerWidth;
+      const currentY = e.clientY / window.innerHeight;
+      
+      // Apply extreme smoothing - only move 2% toward the new position
+      const smoothedX = lastPosition.x + (currentX - lastPosition.x) * 0.02;
+      const smoothedY = lastPosition.y + (currentY - lastPosition.y) * 0.02;
+      
+      // Update last position
+      lastPosition = { x: smoothedX, y: smoothedY };
+      
+      // Update state with greatly smoothed position
       setMousePosition({
-        x: e.clientX / window.innerWidth,
-        y: e.clientY / window.innerHeight,
+        x: smoothedX,
+        y: smoothedY,
       });
     };
 
@@ -19,12 +40,17 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Subtle camera movement based on mouse position (very slow and gentle)
+  // Extremely subtle camera movement based on mouse position (barely perceptible)
   useEffect(() => {
     cameraAnimation.start({
-      x: (mousePosition.x - 0.5) * 10, // Reduced movement range
-      y: (mousePosition.y - 0.5) * 5,  // Reduced movement range
-      transition: { type: "spring", stiffness: 20, damping: 50 } // Much slower and more dampened
+      x: (mousePosition.x - 0.5) * 0.2, // Dramatically reduced movement range (50x slower)
+      y: (mousePosition.y - 0.5) * 0.1, // Dramatically reduced movement range (50x slower)
+      transition: { 
+        type: "spring", 
+        stiffness: 5,   // Extremely low stiffness for very slow response
+        damping: 100,   // Very high damping to prevent any oscillation
+        mass: 10        // High mass for extremely slow movement
+      }
     });
   }, [mousePosition, cameraAnimation]);
 
