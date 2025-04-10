@@ -104,7 +104,7 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
               <a className="text-[#22c55e] font-mono font-bold text-2xl">
-                Secure<span className="text-white">AI</span>
+                Guard<span className="text-white">Cast</span><span className="text-[#22c55e]">AI</span>
               </a>
             </Link>
           </div>

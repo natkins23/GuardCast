@@ -180,7 +180,7 @@ export default function Contact() {
                       </div>
                       <div>
                         <h4 className="text-lg font-semibold text-white mb-1">Email Us</h4>
-                        <p className="text-gray-400">info@secureai.com</p>
+                        <p className="text-gray-400">info@guardcastai.com</p>
                       </div>
                     </div>
                     
