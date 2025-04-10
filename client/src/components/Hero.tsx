@@ -19,12 +19,12 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Subtle camera movement based on mouse position
+  // Subtle camera movement based on mouse position (very slow and gentle)
   useEffect(() => {
     cameraAnimation.start({
-      x: (mousePosition.x - 0.5) * 20,
-      y: (mousePosition.y - 0.5) * 10,
-      transition: { type: "spring", stiffness: 50, damping: 30 }
+      x: (mousePosition.x - 0.5) * 10, // Reduced movement range
+      y: (mousePosition.y - 0.5) * 5,  // Reduced movement range
+      transition: { type: "spring", stiffness: 20, damping: 50 } // Much slower and more dampened
     });
   }, [mousePosition, cameraAnimation]);
 
@@ -35,9 +35,9 @@ export default function Hero() {
     y1: Math.random() * 100 + "%",
     x2: Math.random() * 100 + "%", 
     y2: Math.random() * 100 + "%",
-    opacity: Math.random() * 0.3 + 0.1,
-    delay: Math.random() * 5,
-    duration: Math.random() * 5 + 5
+    opacity: Math.random() * 0.2 + 0.05,
+    delay: Math.random() * 10,
+    duration: Math.random() * 15 + 25  // Much slower animation
   }));
 
   return (
@@ -100,14 +100,14 @@ export default function Hero() {
                   opacity: Math.random() * 0.5 + 0.1,
                 }}
                 animate={{
-                  y: [0, -15, 0],
-                  x: [0, Math.random() * 10 - 5, 0],
-                  opacity: [0.1, 0.5, 0.1]
+                  y: [0, -10, 0],
+                  x: [0, Math.random() * 5 - 2.5, 0],
+                  opacity: [0.1, 0.3, 0.1]
                 }}
                 transition={{
-                  duration: Math.random() * 8 + 8,
+                  duration: Math.random() * 20 + 30, // Much slower animation (30-50 seconds)
                   repeat: Infinity,
-                  delay: Math.random() * 5,
+                  delay: Math.random() * 15,
                   ease: "easeInOut"
                 }}
               />
@@ -130,9 +130,9 @@ export default function Hero() {
                   opacity: [0.2, 0.5, 0.2]
                 }}
                 transition={{
-                  duration: Math.random() * 5 + 5,
+                  duration: Math.random() * 15 + 25, // Much slower pulsing (25-40 seconds)
                   repeat: Infinity,
-                  delay: Math.random() * 5
+                  delay: Math.random() * 10
                 }}
               />
             ))}
@@ -158,9 +158,9 @@ export default function Hero() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0, 0.3, 0] }}
                     transition={{
-                      duration: Math.random() * 10 + 10,
+                      duration: Math.random() * 20 + 30, // Much slower fade (30-50 seconds)
                       repeat: Infinity,
-                      delay: Math.random() * 5
+                      delay: Math.random() * 15
                     }}
                   />
                 );
@@ -194,8 +194,8 @@ export default function Hero() {
           >
             <motion.div 
               className="flex items-center"
-              animate={{ opacity: [1, 0.7, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={{ opacity: [1, 0.8, 1] }}
+              transition={{ duration: 8, repeat: Infinity }}
             >
               <span className="mr-2 inline-block w-2 h-2 rounded-full bg-[#22c55e]"></span>
               {i === 0 && "Motion detected"}
