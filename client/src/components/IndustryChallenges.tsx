@@ -366,7 +366,7 @@ export default function IndustryChallenges() {
               challenges.
             </p>
             <a
-              href="#benefits"
+              href="#smart-security"
               className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#22c55e] shadow-lg hover:bg-[#15803d] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c55e] transition-colors duration-300"
               style={{ boxShadow: "0 0 15px rgba(34, 197, 94, 0.3)" }}
             >
