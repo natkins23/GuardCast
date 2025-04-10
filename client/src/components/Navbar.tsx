@@ -107,7 +107,7 @@ export default function Navbar() {
             </Link>
           </div>
           
-          <div className="hidden md:ml-6 md:flex md:space-x-8">
+          <div className="hidden md:ml-6 md:flex md:space-x-8 md:items-center">
             <NavDropdown menu={servicesMenu} />
             <NavDropdown menu={productsMenu} />
             <NavDropdown menu={pricingMenu} />
