@@ -102,10 +102,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/">
-              <a className="text-[#22c55e] font-mono font-bold text-2xl">
-                Secure<span className="text-white">AI</span>
-              </a>
+            <Link href="/" className="text-[#22c55e] font-mono font-bold text-2xl">
+              Guard<span className="text-white">Cast</span>AI
             </Link>
           </div>
           
