@@ -82,11 +82,18 @@ interface ProgressCircleProps {
   percentage: number;
   color?: string;
   size?: number;
+  showText?: boolean;
+  isAnimating?: boolean;
 }
 
-function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }: ProgressCircleProps) {
+function ProgressCircle({ 
+  percentage = 0, 
+  color = "#22c55e", 
+  size = 100, 
+  showText = true,
+  isAnimating = false
+}: ProgressCircleProps) {
   const [currentPercentage, setCurrentPercentage] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
   
   // Calculates the stroke-dashoffset based on the percentage
   const calculateStrokeDashoffset = (percent: number, circumference: number): number => {
@@ -119,11 +126,7 @@ function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }: Progr
   const strokeDashoffset = calculateStrokeDashoffset(currentPercentage, circumference);
   
   return (
-    <div 
-      className="relative"
-      onMouseEnter={() => setIsAnimating(true)}
-      onMouseLeave={() => setIsAnimating(false)}
-    >
+    <div className="relative">
       <svg 
         width={size} 
         height={size} 
@@ -172,18 +175,20 @@ function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }: Progr
           className={isAnimating ? "pulse-path" : ""}
         />
         
-        {/* Percentage text */}
-        <text 
-          x={radius} 
-          y={radius} 
-          textAnchor="middle" 
-          dominantBaseline="middle"
-          fill="#fff" 
-          fontSize={radius * 0.45}
-          fontWeight="bold"
-        >
-          {Math.round(currentPercentage)}{percentage === 40 ? '' : '%'}
-        </text>
+        {/* Percentage text - only shown when showText is true */}
+        {showText && (
+          <text 
+            x={radius} 
+            y={radius} 
+            textAnchor="middle" 
+            dominantBaseline="middle"
+            fill="#fff" 
+            fontSize={radius * 0.45}
+            fontWeight="bold"
+          >
+            {Math.round(currentPercentage)}{percentage === 40 ? '' : '%'}
+          </text>
+        )}
       </svg>
     </div>
   );
@@ -209,26 +214,33 @@ function ChallengeCard({ challenge, index, isVisible }: ChallengeCardProps) {
       onMouseLeave={() => setHovered(false)}
     >
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-        <div className="relative">
+        {/* This entire div is now the hover target for the circle animation */}
+        <div 
+          className="relative cursor-pointer group"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          {/* Static icon */}
           <div 
-            className="w-24 h-24 rounded-full bg-[#262626] flex items-center justify-center border-4 border-[#121212]"
+            className={`w-24 h-24 rounded-full bg-[#262626] flex items-center justify-center border-4 border-[#121212] transition-all duration-300 ${hovered ? 'opacity-0' : 'opacity-100'}`}
           >
             <div className="w-12 h-12 text-[#22c55e]">
               {icons[challenge.icon]}
             </div>
           </div>
-          <motion.div 
-            className="absolute top-0 left-0 w-24 h-24"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
+          
+          {/* Progress circle that appears on hover */}
+          <div 
+            className={`absolute top-0 left-0 w-24 h-24 transition-opacity duration-300 ${hovered ? 'opacity-100' : 'opacity-0'}`}
           >
             <ProgressCircle 
               percentage={challenge.stats.value} 
               color={challenge.color} 
               size={96}
+              showText={!hovered} // Hide text when hovered
+              isAnimating={hovered} // Control animation from parent
             />
-          </motion.div>
+          </div>
         </div>
         
         <div className="flex-1 text-center md:text-left">

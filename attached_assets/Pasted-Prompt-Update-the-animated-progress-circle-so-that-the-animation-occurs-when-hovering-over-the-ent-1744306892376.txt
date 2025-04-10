@@ -1,0 +1,41 @@
+Prompt:
+"Update the animated progress circle so that the animation occurs when hovering over the entire component (not just the circle itself). The goal is for the progress circle to smoothly animate from 0% to the target percentage (e.g., 85%) when the user hovers over the whole component containing the circle. Additionally, remove the percentage inside the circle on hover, so that only the animated circle fills up with no percentage value shown inside.
+
+Instructions:
+Component Structure:
+
+Container: Place the circle inside a container that can be hovered over. The entire container should trigger the animation when hovered, not just the circle itself.
+
+Circle Setup: The circle should still be created using SVG, with a static background stroke and an animated foreground stroke for the progress. The target value will be dynamically adjusted.
+
+Styling:
+
+The container should have the hover state activated on mouse enter and mouse leave. On hover, the circle will animate its progress.
+
+Ensure that on hover, the circle smoothly fills from 0% to the target value in 1 second.
+
+On hover, remove the percentage inside the circle and only show the animation of the stroke filling.
+
+Use CSS transitions for the smooth animation of the stroke.
+
+Behavior:
+
+When the user hovers over the component containing the circle, the circle will animate from 0% to the target value (e.g., 85%) over 1 second.
+
+Upon mouse leave, the progress circle should reset or stay at the current target value, depending on your preference.
+
+Event Handling:
+
+Use JavaScript to trigger the animation on mouseenter (hover over the component). The stroke-dashoffset should animate from 0 to the target value.
+
+Upon mouseleave, the animation can either reset back to 0% or maintain the target value, depending on your design preference.
+
+Customization:
+
+The target percentage should be dynamically adjustable for different sections of the infographic (e.g., High Costs, Slow Response Times).
+
+The dynamic data should reflect different values for each section, so the animation corresponds to specific values (e.g., 85% for 'High Costs', 40% for 'Slow Response Times').
+
+Objective:
+The animation should give a fluid, dynamic, and engaging feel, where the user interacts with the component as a whole to see the progress animation. The percentage inside the circle should be hidden on hover, with the focus on the animated circle fill instead."
+
