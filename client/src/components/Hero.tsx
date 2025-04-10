@@ -4,11 +4,12 @@ export default function Hero() {
   return (
     <section className="relative flex items-center min-h-screen pt-16 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#121212]/90 to-[#121212]/70 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-[#121212] z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-[#121212] z-10"></div>
         <img 
-          src="https://images.unsplash.com/photo-1621401687419-d9d4638ca796?q=80&w=1920&auto=format&fit=crop" 
-          alt="Security monitoring room with screens" 
-          className="object-cover w-full h-full" 
+          src="/guardcastHero.png"
+          alt="AI Security Detection Interface" 
+          className="object-cover w-full h-full opacity-90" 
         />
       </div>
       
