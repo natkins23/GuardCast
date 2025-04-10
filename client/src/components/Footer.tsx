@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
             <span className="text-[#22c55e] font-mono font-bold text-2xl mb-4 block">
-              Guard<span className="text-white">Cast</span><span className="text-[#22c55e]">AI</span>
+              Secure<span className="text-white">AI</span>
             </span>
             <p className="text-gray-400 mb-6">
               AI-powered security automation solutions for modern security firms.
