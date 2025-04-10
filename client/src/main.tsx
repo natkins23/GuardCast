@@ -15,7 +15,7 @@ document.head.appendChild(jetbrainsFontLink);
 
 // Add title and meta tags
 const title = document.createElement("title");
-title.textContent = "GuardCastAI - AI-Powered Security Automation";
+title.textContent = "SecureAI - AI-Powered Security Automation";
 document.head.appendChild(title);
 
 const metaDescription = document.createElement("meta");
