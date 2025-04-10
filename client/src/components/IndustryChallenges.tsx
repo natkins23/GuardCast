@@ -3,8 +3,21 @@ import { useIntersection } from 'react-use';
 import * as d3 from 'd3';
 import { motion } from 'framer-motion';
 
+// Define challenge interface
+interface SecurityChallenge {
+  id: number;
+  icon: "dollar" | "clock" | "alert" | "settings";
+  title: string;
+  description: string;
+  color: string;
+  stats: {
+    value: number;
+    label: string;
+  };
+}
+
 // Define the data for our infographic
-const securityChallenges = [
+const securityChallenges: SecurityChallenge[] = [
   {
     id: 1,
     icon: "dollar",
@@ -65,8 +78,35 @@ const icons = {
 };
 
 // Progress Circle component using D3
-function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }) {
+interface ProgressCircleProps {
+  percentage: number;
+  color?: string;
+  size?: number;
+}
+
+function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }: ProgressCircleProps) {
   const svgRef = useRef(null);
+  const [currentPercentage, setCurrentPercentage] = useState(0);
+  
+  // Animate the percentage from 0 to target when component mounts
+  useEffect(() => {
+    const duration = 1000; // animation duration in ms
+    const steps = 60; // number of steps for smoother animation
+    const stepDuration = duration / steps;
+    const increment = percentage / steps;
+    let currentStep = 0;
+    
+    const timer = setInterval(() => {
+      currentStep++;
+      setCurrentPercentage(Math.min(increment * currentStep, percentage));
+      
+      if (currentStep >= steps) {
+        clearInterval(timer);
+      }
+    }, stepDuration);
+    
+    return () => clearInterval(timer);
+  }, [percentage]);
   
   useEffect(() => {
     if (!svgRef.current) return;
@@ -90,35 +130,109 @@ function ProgressCircle({ percentage = 0, color = "#22c55e", size = 100 }) {
       .attr("stroke", "#333")
       .attr("stroke-width", thickness);
     
-    // Progress arc
-    const arc = d3.arc()
-      .innerRadius(radius - thickness)
-      .outerRadius(radius)
-      .startAngle(0)
-      .endAngle(2 * Math.PI * (percentage / 100));
+    // Calculate the circumference of the circle
+    const circumference = 2 * Math.PI * (radius - thickness / 2);
     
+    // Manually calculate the arc path instead of using d3.arc()
+    const calculateArcPath = () => {
+      const startAngle = 0;
+      const endAngle = 2 * Math.PI * (currentPercentage / 100);
+      
+      const innerRadius = radius - thickness;
+      const outerRadius = radius;
+      
+      // Calculate points for outer and inner arc
+      const x1 = Math.cos(startAngle) * outerRadius;
+      const y1 = Math.sin(startAngle) * outerRadius;
+      
+      const x2 = Math.cos(endAngle) * outerRadius;
+      const y2 = Math.sin(endAngle) * outerRadius;
+      
+      const x3 = Math.cos(endAngle) * innerRadius;
+      const y3 = Math.sin(endAngle) * innerRadius;
+      
+      const x4 = Math.cos(startAngle) * innerRadius;
+      const y4 = Math.sin(startAngle) * innerRadius;
+      
+      // Create arc flag (0 for minor arc, 1 for major arc)
+      const arcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
+      
+      // Build the SVG path
+      return `
+        M ${x1} ${y1}
+        A ${outerRadius} ${outerRadius} 0 ${arcFlag} 1 ${x2} ${y2}
+        L ${x3} ${y3}
+        A ${innerRadius} ${innerRadius} 0 ${arcFlag} 0 ${x4} ${y4}
+        Z
+      `;
+    };
+    
+    const arcPath = calculateArcPath();
+    
+    // Add glow effect filter
+    const defs = svg.append("defs");
+    const filter = defs.append("filter")
+      .attr("id", `glow-${percentage}`)
+      .attr("x", "-50%")
+      .attr("y", "-50%")
+      .attr("width", "200%")
+      .attr("height", "200%");
+      
+    filter.append("feGaussianBlur")
+      .attr("stdDeviation", "3")
+      .attr("result", "coloredBlur");
+      
+    const feMerge = filter.append("feMerge");
+    feMerge.append("feMergeNode")
+      .attr("in", "coloredBlur");
+    feMerge.append("feMergeNode")
+      .attr("in", "SourceGraphic");
+    
+    // Progress arc with animation
     g.append("path")
-      .attr("d", arc)
-      .attr("fill", color);
+      .attr("d", arcPath)
+      .attr("fill", color)
+      .attr("opacity", 0.8)
+      .attr("filter", `url(#glow-${percentage})`);
     
-    // Percentage text
+    // Add a slight pulse animation to the arc
+    g.append("path")
+      .attr("d", arcPath)
+      .attr("fill", "none")
+      .attr("stroke", color)
+      .attr("stroke-width", 1)
+      .attr("opacity", 0.5)
+      .attr("class", "pulse-path");
+    
+    // Percentage text with counter animation
     g.append("text")
       .attr("text-anchor", "middle")
       .attr("dy", ".35em")
       .attr("fill", "#fff")
       .attr("font-size", radius * 0.45)
       .attr("font-weight", "bold")
-      .text(`${Math.round(percentage)}%`);
+      .text(`${Math.round(currentPercentage)}${percentage === 40 ? '' : '%'}`);
       
-  }, [percentage, color, size]);
+  }, [currentPercentage, color, size, percentage]);
   
   return (
-    <svg ref={svgRef} width={size} height={size}></svg>
+    <svg 
+      ref={svgRef} 
+      width={size} 
+      height={size} 
+      className="progress-circle"
+    ></svg>
   );
 }
 
 // Challenge Card Component
-function ChallengeCard({ challenge, index, isVisible }) {
+interface ChallengeCardProps {
+  challenge: SecurityChallenge;
+  index: number;
+  isVisible: boolean;
+}
+
+function ChallengeCard({ challenge, index, isVisible }: ChallengeCardProps) {
   const [hovered, setHovered] = useState(false);
   
   return (
