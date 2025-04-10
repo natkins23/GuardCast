@@ -103,11 +103,11 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-[#22c55e] font-mono font-bold text-2xl">
-              Guard<span className="text-white">Cast</span>AI
+              Guard<span className="text-white">Cast</span><span className="text-[#22c55e]">AI</span>
             </Link>
           </div>
           
-          <div className="hidden md:ml-6 md:flex md:space-x-8">
+          <div className="hidden md:ml-6 md:flex md:space-x-8 md:items-center">
             <NavDropdown menu={servicesMenu} />
             <NavDropdown menu={productsMenu} />
             <NavDropdown menu={pricingMenu} />
